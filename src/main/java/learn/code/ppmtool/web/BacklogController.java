@@ -24,8 +24,7 @@ public class BacklogController {
     private MapValidationErrorService mapValidationErrorService;
 
     @PostMapping("/{backlogId}")
-    public ResponseEntity<?> createProjectTasksToBacklog(@Valid @RequestBody ProjectTask projectTask,
-                                                         @PathVariable String backlogId,
+    public ResponseEntity<?> createProjectTasksToBacklog(@PathVariable String backlogId, @Valid @RequestBody ProjectTask projectTask,
                                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return mapValidationErrorService.getErrorMap(bindingResult);
@@ -46,9 +45,8 @@ public class BacklogController {
     }
 
     @PatchMapping("/{backlogId}/{taskId}")
-    public ResponseEntity<?> updateProjectTask(@Valid @RequestBody ProjectTask projectTask,
-                                                         @PathVariable String backlogId, @PathVariable String taskId,
-                                                         BindingResult bindingResult) {
+    public ResponseEntity<?> updateProjectTask(@PathVariable String backlogId, @PathVariable String taskId,
+                                               @Valid @RequestBody ProjectTask projectTask, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return mapValidationErrorService.getErrorMap(bindingResult);
         }
@@ -61,6 +59,6 @@ public class BacklogController {
     public ResponseEntity<?> deleteProjectTask(@PathVariable String backlogId, @PathVariable String taskId) {
         projectTaskService.deleteProjectTask(backlogId, taskId);
 
-        return new ResponseEntity<>("Project Task:" + taskId  + " deleted", HttpStatus.OK);
+        return new ResponseEntity<>("Project Task:" + taskId + " deleted", HttpStatus.OK);
     }
 }
