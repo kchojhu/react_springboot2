@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,27 +28,27 @@ public class ProjectController {
     private MapValidationErrorService mapValidationErrorService;
 
     @PostMapping("")
-    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult bindingResult) {
+    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult bindingResult, Principal principal) {
         if (bindingResult.hasErrors()) {
             return mapValidationErrorService.getErrorMap(bindingResult);
         }
 
-        return new ResponseEntity<>(projectService.saveOrUpdate(project), HttpStatus.CREATED);
+        return new ResponseEntity<>(projectService.saveOrUpdate(project, principal.getName()), HttpStatus.CREATED);
     }
 
     @GetMapping("/{projectIdentifier}")
-    public ResponseEntity<?> findByProjectIdentifier(@PathVariable String projectIdentifier) {
-        return new ResponseEntity<>(projectService.findByProjectIdentifier(projectIdentifier), HttpStatus.OK);
+    public ResponseEntity<?> findByProjectIdentifier(@PathVariable String projectIdentifier, Principal principal) {
+        return new ResponseEntity<>(projectService.findByProjectIdentifier(projectIdentifier, principal.getName()), HttpStatus.OK);
     }
 
     @GetMapping("/all")
-    public Iterable<Project> findAll() {
-        return projectService.findAll();
+    public Iterable<Project> findAll(Principal principal) {
+        return projectService.findAll(principal.getName());
     }
 
     @DeleteMapping("/{projectIdentifier}")
-    public ResponseEntity<?> deleteProject(@PathVariable String projectIdentifier) {
-        projectService.deleteByProjectIdentifier(projectIdentifier);
+    public ResponseEntity<?> deleteProject(@PathVariable String projectIdentifier, Principal principal) {
+        projectService.deleteByProjectIdentifier(projectIdentifier, principal.getName());
 
         return new ResponseEntity<>("Deleted", HttpStatus.OK);
     }
